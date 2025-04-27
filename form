@@ -1,0 +1,79 @@
+Server.js
+const express = require('express')
+const cors = require('cors')
+const mongoose = require('mongoose')
+const studentModel = require('./Students')
+const app = express()
+app.use(cors())
+app.use(express.json())
+mongoose.connect('mongodb://127.0.0.1:27017/College')
+.then(() => console.log('DB connected'))
+.catch(err => console.log(err))
+app.post('/saveStudent', async (req, res) => {
+try {
+console.log(req.body)
+await studentModel.create(req.body)
+res.json({ message: 'Student Added Successfully' })
+}
+catch (error) {
+res.json(error)
+}
+})
+
+const PORT = 8000
+app.listen(PORT, () => {
+console.log(`Server running on port ${PORT}`)
+})
+
+Student.js
+const mongoose = require('mongoose');
+const studentSchema = new mongoose.Schema({
+name: String
+});
+// Correct model creation:
+const studentModel = mongoose.model("Students", studentSchema, "Students");
+module.exports = studentModel;
+
+
+
+
+
+app.jsx
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
+function App() {
+const [name, setName] = useState('')
+const [reg, setReg] = useState('')
+const saveStudent = async (event) => {
+event.preventDefault()
+try {
+const response = await axios.post('http://localhost:8000/savestudent',
+{ name })
+alert(response.data.message)
+}
+catch (err) {
+alert(err)
+}
+}
+return (
+<div>
+<form>
+<div>
+<label>Name:</label>
+<input type="text" onChange={(e) => setName(e.target.value)} />
+</div>
+<div>
+<label>reg no:</label>
+<input type="text" onChange={(e) => setReg(e.target.value)} />
+</div>
+<div>
+<button>save</button>
+</div>
+</form>
+</div>
+)
+}
+export default App
